@@ -1,0 +1,36 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "discord bot",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "DiscordUsersIntent",
+          "slots": [],
+          "samples": [
+            "quem está no discord",
+            "quem está online no discord",
+            "quais usuários estão no discord",
+            "listar usuários no discord",
+            "me diga quem está nos canais do discord",
+            "listar pessoas nos canais de voz",
+            "quem está nos canais de voz",
+            "verificar canais de voz"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+} 
