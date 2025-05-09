@@ -1,14 +1,14 @@
 {
   "name": "whoisondiscord-bot",
   "version": "1.0.0",
+  "description": "Bot do Discord integrado com Alexa para informar quem está nos canais de voz.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "echo \"No test specified\" && exit 0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "João Coelho",
+  "license": "MIT",
   "dependencies": {
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
