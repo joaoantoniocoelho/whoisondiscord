@@ -31,10 +31,16 @@ client.login(process.env.DISCORD_BOT_TOKEN);
 // Endpoint da Alexa
 app.post('/api/alexa', async (req, res) => {
   try {
+    console.log('📩 Requisição recebida da Alexa:');
+    console.log(JSON.stringify(req.body, null, 2)); // loga todo o corpo
+
     const { request } = req.body;
 
-    if (request.type === 'IntentRequest') {
-      if (request.intent.name === 'DiscordUsersIntent') {
+    if (request?.type === 'IntentRequest') {
+      const intentName = request.intent?.name;
+      console.log(`🧠 Intent detectada: ${intentName}`);
+
+      if (intentName === 'DiscordUsersIntent') {
         const users = await getDiscordUsers();
 
         return res.json({
@@ -47,7 +53,11 @@ app.post('/api/alexa', async (req, res) => {
             shouldEndSession: true
           }
         });
+      } else {
+        console.warn(`⚠️ Intent desconhecida: ${intentName}`);
       }
+    } else {
+      console.warn(`⚠️ Tipo de request não tratado: ${request?.type}`);
     }
 
     return res.json({
@@ -61,7 +71,7 @@ app.post('/api/alexa', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erro ao lidar com a Alexa:', error);
+    console.error('❌ Erro ao lidar com a Alexa:', error);
     return res.json({
       version: '1.0',
       response: {
@@ -81,6 +91,7 @@ async function getDiscordUsers() {
 
   const guild = client.guilds.cache.get(process.env.DISCORD_GUILD_ID);
   if (!guild) {
+    console.warn('❌ Guilda não encontrada com o ID fornecido.');
     return 'Não consegui acessar o servidor especificado.';
   }
 
@@ -88,6 +99,7 @@ async function getDiscordUsers() {
 
   voiceChannels.forEach(channel => {
     const members = channel.members.map(member => member.user.username);
+    console.log(`🔊 Canal ${channel.name} tem ${members.length} usuários.`);
 
     if (members.length > 0) {
       usersByChannel.push({
