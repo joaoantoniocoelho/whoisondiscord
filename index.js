@@ -25,6 +25,13 @@ client.once('ready', () => {
 
 client.login(process.env.DISCORD_BOT_TOKEN);
 
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'UP'
+  });
+});
+
+
 app.post('/api/alexa', async (req, res) => {
   try {
     console.log('Incoming Alexa request:');
