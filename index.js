@@ -30,60 +30,74 @@ client.login(process.env.DISCORD_BOT_TOKEN);
 
 // Endpoint da Alexa
 app.post('/api/alexa', async (req, res) => {
-  try {
-    console.log('📩 Requisição recebida da Alexa:');
-    console.log(JSON.stringify(req.body, null, 2)); // loga todo o corpo
-
-    const { request } = req.body;
-
-    if (request?.type === 'IntentRequest') {
-      const intentName = request.intent?.name;
-      console.log(`🧠 Intent detectada: ${intentName}`);
-
-      if (intentName === 'DiscordUsersIntent') {
-        const users = await getDiscordUsers();
-
+    try {
+      console.log('📩 Requisição recebida da Alexa:');
+      console.log(JSON.stringify(req.body, null, 2));
+  
+      const { request } = req.body;
+  
+      if (request?.type === 'LaunchRequest') {
+        console.log('🟢 LaunchRequest detectado');
         return res.json({
           version: '1.0',
           response: {
             outputSpeech: {
               type: 'SSML',
-              ssml: `<speak>${users}</speak>`
+              ssml: '<speak>Olá! Você pode perguntar quem está na call do Discord.</speak>'
             },
-            shouldEndSession: true
+            shouldEndSession: false
           }
         });
+      }
+  
+      if (request?.type === 'IntentRequest') {
+        const intentName = request.intent?.name;
+        console.log(`🧠 Intent detectada: ${intentName}`);
+  
+        if (intentName === 'DiscordUsersIntent') {
+          const users = await getDiscordUsers();
+  
+          return res.json({
+            version: '1.0',
+            response: {
+              outputSpeech: {
+                type: 'SSML',
+                ssml: `<speak>${users}</speak>`
+              },
+              shouldEndSession: true
+            }
+          });
+        } else {
+          console.warn(`⚠️ Intent desconhecida: ${intentName}`);
+        }
       } else {
-        console.warn(`⚠️ Intent desconhecida: ${intentName}`);
+        console.warn(`⚠️ Tipo de request não tratado: ${request?.type}`);
       }
-    } else {
-      console.warn(`⚠️ Tipo de request não tratado: ${request?.type}`);
+  
+      return res.json({
+        version: '1.0',
+        response: {
+          outputSpeech: {
+            type: 'SSML',
+            ssml: '<speak>Desculpe, não consegui entender o pedido.</speak>'
+          },
+          shouldEndSession: true
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erro ao lidar com a Alexa:', error);
+      return res.json({
+        version: '1.0',
+        response: {
+          outputSpeech: {
+            type: 'SSML',
+            ssml: '<speak>Ocorreu um erro ao processar sua solicitação.</speak>'
+          },
+          shouldEndSession: true
+        }
+      });
     }
-
-    return res.json({
-      version: '1.0',
-      response: {
-        outputSpeech: {
-          type: 'SSML',
-          ssml: '<speak>Desculpe, não consegui entender o pedido.</speak>'
-        },
-        shouldEndSession: true
-      }
-    });
-  } catch (error) {
-    console.error('❌ Erro ao lidar com a Alexa:', error);
-    return res.json({
-      version: '1.0',
-      response: {
-        outputSpeech: {
-          type: 'SSML',
-          ssml: '<speak>Ocorreu um erro ao processar sua solicitação.</speak>'
-        },
-        shouldEndSession: true
-      }
-    });
-  }
-});
+  });  
 
 // Função para obter usuários nos canais de voz do servidor especificado
 async function getDiscordUsers() {
